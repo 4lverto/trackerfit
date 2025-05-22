@@ -22,7 +22,6 @@ cd trackerfit
 pip install -e .
 ```
 
-```markdown
 ## 📦 Características
 
 - Detecta automáticamente poses humanas con MediaPipe
@@ -119,8 +118,6 @@ Grado en Ingeniería Informática
 Universidad de Granada
 
 ## 🌐 Recursos
-```markdown
 - [MediaPipe Pose](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=es-419)
 - [NumPy](https://numpy.org/)
 - [OpenCV](https://opencv.org/)
-```

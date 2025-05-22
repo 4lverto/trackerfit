@@ -103,9 +103,6 @@ Usa `pytest` para validar funcionalidades mínimas:
 
 ```bash
 pytest
-yaml
-Copiar
-Editar
 ```
 
 ## 📜 Licencia

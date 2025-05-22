@@ -81,13 +81,14 @@ Un triángulo sobre el ángulo evaluado:
 Valor numérico del ángulo en grados
 
 ## 📁 Estructura de la librería
-
+```pgsql
 trackerfit/
 ├── ejercicios/         # Clases para cada tipo de ejercicio
 ├── session/            # Entrada por vídeo o cámara + gestión de sesiones
 ├── tracker/            # Wrapper de MediaPipe
 ├── utils/              # Cálculo de ángulos, enums
 ├── factory.py          # Devuelve el ejercicio correspondiente
+```
 
 ## 📂 Ejemplos
 

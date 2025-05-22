@@ -7,24 +7,20 @@
 - Python >= 3.8
 - pip >= 21.0
 
----
-
 ## 🚀 Instalación
 
 ### Desde PyPI
 
 ```bash
 pip install trackerfit 
----
+```
 
 ### Desde un repositorio local
-
+```bash
 git clone https://github.com/4lverto/trackerfit.git
 cd trackerfit
 pip install -e .
-
-
-✅ Convierte esto en una lista de Markdown:
+```
 
 ```markdown
 ## 📦 Características
@@ -36,7 +32,6 @@ pip install -e .
 - Visualización dinámica del ángulo y triángulo codificado por color
 - Exportación del historial de sesión (ángulo, reps, landmarks, timestamp)
 - Arquitectura modular y extensible
-
 
 ## 🧠 Ejercicios soportados
 
@@ -70,6 +65,7 @@ while manager.sesion_activa():
 reps = manager.obtener_repeticiones()
 resumen = manager.generar_resumen(reps)
 print(resumen)
+```
 
 ## 🎨 Visualización en tiempo real
 
@@ -110,7 +106,7 @@ pytest
 yaml
 Copiar
 Editar
-
+```
 
 ## 📜 Licencia
 
@@ -127,3 +123,4 @@ Universidad de Granada
 - [MediaPipe Pose](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker?hl=es-419)
 - [NumPy](https://numpy.org/)
 - [OpenCV](https://opencv.org/)
+```

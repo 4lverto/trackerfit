@@ -43,8 +43,7 @@ class VideoSession(BaseSession):
 
         fuente = fuente.strip()
         if not os.path.isabs(fuente):
-            BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-            fuente = os.path.abspath(os.path.join(BASE_DIR, fuente))
+            raise ValueError("La ruta del vídeo debe ser absoluta. Verifica desde el backend.")
 
         print(f"Ruta final a abrir: {fuente}")
 

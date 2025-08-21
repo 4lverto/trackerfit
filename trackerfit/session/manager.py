@@ -45,12 +45,12 @@ class SessionManager:
 
         if tipo == TipoEntrada.CAMARA:
             self.session = CameraSession()
-            self.session.start(nombre_ejercicio, lado)
+            self.session.iniciar(nombre_ejercicio, lado)
         elif tipo == TipoEntrada.VIDEO:
             if not fuente:
                 raise ValueError("Se requiere fuente de vídeo para una sesión tipo 'video'")
             self.session = VideoSession()
-            self.session.start(nombre_ejercicio, fuente, lado)
+            self.session.iniciar(nombre_ejercicio, fuente, lado)
         else:
             raise ValueError(f"Tipo de sesión desconocido: {tipo}")
 
@@ -64,7 +64,7 @@ class SessionManager:
         Detiene la sesión en curso (si existe) y guarda el historial de frames.
         """
         if self.session:
-            self.session.stop()
+            self.session.finalizar()
             self.end_time = datetime.now()
             self.historial_temporal = self.session.historial_frames
             self.session = None

@@ -1,4 +1,4 @@
-# ejercicios/tricep_dip.py
+# ejercicios/dip_tricep.py
 # -------------------------------
 # Requierements
 # -------------------------------
@@ -10,7 +10,7 @@ from trackerfit.ejercicios.ejercicio import Ejercicio
 
 class DipTricep(Ejercicio):
     """
-    Implementación del ejercicio 'Fondos de Tríceps (Tricep Dip)'.
+    Implementación del ejercicio 'Fondos de Tríceps (Dip Tricep)'.
     Calcula el ángulo entre hombro, codo y muñeca para identificar la flexión de los brazos al bajar el cuerpo.
     """
     def __init__(self,lado="derecho"):

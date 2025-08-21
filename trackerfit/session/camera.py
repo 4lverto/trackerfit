@@ -10,7 +10,7 @@ import time
 
 from trackerfit.tracker.pose_tracker import PoseTracker
 from trackerfit.factory import get_ejercicio
-from trackerfit.session.base import BaseSession
+from trackerfit.session.session import Session
 
 # -------------------------------
 # Helpers
@@ -19,7 +19,7 @@ from trackerfit.session.base import BaseSession
 def get_screen_height():
     return ctypes.windll.user32.GetSystemMetrics(1)  # Altura de pantalla
 
-class CameraSession(BaseSession):
+class CameraSession(Session):
     def __init__(self):
         self.pose_tracker = PoseTracker()
         self.contador = None
@@ -29,7 +29,7 @@ class CameraSession(BaseSession):
         self.cap = None
         self.historial_frames = []
 
-    def start(self, nombre_ejercicio: str, lado: str = "derecho"):
+    def iniciar(self, nombre_ejercicio: str, lado: str = "derecho"):
         if self.running:
             return
         
@@ -43,7 +43,7 @@ class CameraSession(BaseSession):
         self.repeticiones = 0
         self.running = True
         self.thread = threading.Thread(target=self.loop, daemon=True)
-        self.thread.start()
+        self.thread.iniciar()
 
     def loop(self):
         """
@@ -106,7 +106,7 @@ class CameraSession(BaseSession):
 
 
 
-    def stop(self):
+    def finalizar(self):
         self.running = False
         if self.thread:
             self.thread.join()

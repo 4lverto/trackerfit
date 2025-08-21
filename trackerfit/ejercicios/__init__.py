@@ -5,16 +5,16 @@
 from .curl_bicep import CurlBicep
 from .sentadilla import Sentadilla
 from .flexion import Flexion
-from .quad_extension import QuadExtension
+from .extension_cuadricep import ExtensionCuadricep
 from .press_militar import PressMilitar
 from .crunch_abdominal import CrunchAbdominal
-from .tricep_dip import TricepDip
+from .dip_tricep import DipTricep
 from .elevacion_lateral import ElevacionLateral
-from .base import Ejercicio
+from .ejercicio import Ejercicio
 # -------------------------------
 # Helpers
 # -------------------------------
 __all__ = [
-    "CurlBicep", "Sentadilla", "Flexion", "QuadExtension", "PressMilitar",
-    "CrunchAbdominal", "TricepDip", "ElevacionLateral", "Ejercicio"
+    "CurlBicep", "Sentadilla", "Flexion", "ExtensionCuadricep", "PressMilitar",
+    "CrunchAbdominal", "DipTricep", "ElevacionLateral", "Ejercicio"
 ]

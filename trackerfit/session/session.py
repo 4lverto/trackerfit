@@ -10,20 +10,20 @@ from typing import Optional
 # Helpers
 # -------------------------------
 
-class BaseSession(ABC):
+class Session(ABC):
     @abstractmethod
-    def start(self, nombre_ejercicio: str, fuente: Optional[str] = None):
+    def iniciar(self, nombre_ejercicio: str, fuente: Optional[str] = None):
         """
         Inicia la sesión (cámara o vídeo).
 
         Args:
             nombre_ejercicio (str): Nombre del ejercicio a contar.
-            fuente (Optional[str]): Fuente de entrada. Puede ser None para cámara o path para vídeo.
+            fuente (Optional[str]): Fuente de entrada. Puede ser None para cámara (por defecto) o path para vídeo.
         """
         pass
 
     @abstractmethod
-    def stop(self):
+    def finalizar(self):
         """
         Detiene la sesión y libera recursos.
         """

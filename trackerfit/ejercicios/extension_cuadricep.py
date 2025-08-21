@@ -2,13 +2,13 @@
 # -------------------------------
 # Requierements
 # -------------------------------
-from trackerfit.ejercicios.base import Ejercicio
+from trackerfit.ejercicios.ejercicio import Ejercicio
 
 # -------------------------------
 # Helpers
 # -------------------------------
 
-class QuadExtension(Ejercicio):
+class ExtensionCuadricep(Ejercicio):
     """
     Implementación del ejercicio 'Extensión de Cuádriceps'.
     Calcula el ángulo entre cadera, rodilla y tobillo para detectar la extensión completa de la pierna.

@@ -11,18 +11,18 @@ from typing import Optional
 
 from trackerfit.tracker.pose_tracker import PoseTracker
 from trackerfit.factory import get_ejercicio
-from trackerfit.session.base import BaseSession
+from trackerfit.session.session import Session
 
 
 # -------------------------------
 # Helpers
 # -------------------------------
 
-def get_screen_height():
+def calcular_altura_pantalla():
     return ctypes.windll.user32.GetSystemMetrics(1)  # Altura de pantalla
 
 
-class VideoSession(BaseSession):
+class VideoSession(Session):
     def __init__(self):
         self.pose_tracker = PoseTracker()
         self.contador = None
@@ -32,7 +32,7 @@ class VideoSession(BaseSession):
         self.cap = None
         self.historial_frames = []
 
-    def start(self, nombre_ejercicio: str, fuente: Optional[str] = None, lado: str = "derecho"):
+    def iniciar(self, nombre_ejercicio: str, fuente: Optional[str] = None, lado: str = "derecho"):
         if self.running:
             return
 
@@ -60,10 +60,10 @@ class VideoSession(BaseSession):
         self.repeticiones = 0
         self.running = True
         self.thread = threading.Thread(target=self.loop, daemon=True)
-        self.thread.start()
+        self.thread.iniciar()
 
     def loop(self):
-        pantalla_alto = get_screen_height()
+        pantalla_alto = calcular_altura_pantalla()
         nuevo_alto = pantalla_alto - 120
 
         # Crear ventana solo una vez
@@ -124,7 +124,7 @@ class VideoSession(BaseSession):
         print(f"Procesamiento de vídeo finalizado. Total repeticiones: {self.repeticiones}")
         self._cleanup()
 
-    def stop(self):
+    def finalizar(self):
         self.running = False
         if self.thread:
             self.thread.join()

@@ -2,13 +2,13 @@
 # -------------------------------
 # Requierements
 # -------------------------------
-from trackerfit.ejercicios.base import Ejercicio
+from trackerfit.ejercicios.ejercicio import Ejercicio
 
 # -------------------------------
 # Helpers
 # -------------------------------
 
-class TricepDip(Ejercicio):
+class DipTricep(Ejercicio):
     """
     Implementación del ejercicio 'Fondos de Tríceps (Tricep Dip)'.
     Calcula el ángulo entre hombro, codo y muñeca para identificar la flexión de los brazos al bajar el cuerpo.

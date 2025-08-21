@@ -6,7 +6,7 @@
 from typing import Optional
 from datetime import datetime
 
-from trackerfit.session.base import BaseSession
+from trackerfit.session.session import Session
 from trackerfit.session.camera import CameraSession
 from trackerfit.session.video import VideoSession
 from trackerfit.utils.tipo_entrada_enum import TipoEntrada
@@ -21,7 +21,7 @@ class SessionManager:
     inicialización, ejecución, finalización y generación de resumen.
     """
     def __init__(self):
-        self.session: Optional[BaseSession] = None
+        self.session: Optional[Session] = None
         self.tipo: Optional[str] = None
         self.fuente: Optional[str] = None
         self.nombre_ejercicio: Optional[str] = None

@@ -4,8 +4,7 @@
 # -------------------------------
 from .manager import SessionManager
 from .camera import CameraSession
-from .video import VideoSession
-from .base import BaseSession
-from .video_paths import listar_videos_por_ejercicio
+from .video import VideoSesion
+from .session import Session
 
-__all__ = ["SessionManager", "CameraSession", "VideoSession", "BaseSession", "listar_videos_por_ejercicio"]
+__all__ = ["SessionManager", "CameraSession", "VideoSession", "Session", "listar_videos_por_ejercicio"]

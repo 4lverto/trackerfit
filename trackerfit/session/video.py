@@ -60,8 +60,8 @@ class VideoSession(Session):
         self.repeticiones = 0
         self.running = True
         self.thread = threading.Thread(target=self.loop, daemon=True)
-        self.thread.iniciar()
-
+        self.thread.start()
+        
     def loop(self):
         pantalla_alto = calcular_altura_pantalla()
         nuevo_alto = pantalla_alto - 120

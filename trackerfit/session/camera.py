@@ -43,7 +43,7 @@ class CameraSession(Session):
         self.repeticiones = 0
         self.running = True
         self.thread = threading.Thread(target=self.loop, daemon=True)
-        self.thread.iniciar()
+        self.thread.start()
 
     def loop(self):
         """
@@ -103,8 +103,6 @@ class CameraSession(Session):
                 self.running = False
 
         self._cleanup()
-
-
 
     def finalizar(self):
         self.running = False

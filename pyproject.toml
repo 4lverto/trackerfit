@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "trackerfit"
-version = "0.2.2"
+version = "0.2.3"
 description = "Librería de visión artificial para seguimiento y conteo de repeticiones en ejercicios físicos usando MediaPipe."
 readme = "README.md"
 requires-python = ">=3.8"

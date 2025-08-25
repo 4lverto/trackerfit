@@ -20,4 +20,4 @@ class ElevacionLateral(Ejercicio):
                 puntos = (15,11,23) # Muñeca (izq) = 15 , Hombro (izq) = 11 y Cadera (izq) = 23
 
             super().__init__(angulo_min=40,angulo_max=90,puntos=puntos)
-            self.umbral_validacion = self.angulo_min
+            self.umbral_validacion = self.angulo_max

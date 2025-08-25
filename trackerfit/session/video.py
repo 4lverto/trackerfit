@@ -4,23 +4,23 @@
 # -------------------------------
 import os
 import threading
+from typing import Literal, Optional
 import cv2
 import time
-import ctypes
 
 from trackerfit.tracker.pose_tracker import PoseTracker
 from trackerfit.factory import get_ejercicio
 from trackerfit.session.session import Session
-
+from trackerfit.utils.rotacion import (
+    GradosRotacion, Normalizar,
+    calcular_altura_pantalla, rotar_frame,
+    rotacion_necesaria, redimensionar
+)
 
 # -------------------------------
 # Helpers
 # -------------------------------
-
-def calcular_altura_pantalla():
-    return ctypes.windll.user32.GetSystemMetrics(1)  # Altura de pantalla
-
-
+            
 class VideoSession(Session):
     def __init__(self):
         self.pose_tracker = PoseTracker()
@@ -30,8 +30,21 @@ class VideoSession(Session):
         self.thread = None
         self.cap = None
         self.historial_frames = []
-
-    def iniciar(self, nombre_ejercicio: str, fuente: Optional[str] = None, lado: str = "derecho"):
+        
+        self.normalizar_a: Normalizar = "auto"
+        self.grados_rotacion: GradosRotacion = 0
+        self.rotacion_sesion: GradosRotacion = 0
+    
+    
+    def iniciar(
+            self,
+            nombre_ejercicio: str,
+            fuente: Optional[str] = None,
+            lado: str = "derecho",
+            normalizar: Normalizar = "auto",
+            forzar_grados_rotacion: GradosRotacion = 0
+    ):
+        
         if self.running:
             return
 
@@ -54,6 +67,20 @@ class VideoSession(Session):
         if not self.cap.isOpened():
             raise RuntimeError(f"No se pudo abrir el archivo de vídeo")
 
+        self.normalizar_a = normalizar
+        self.grados_rotacion = forzar_grados_rotacion
+        
+        ok, frame0 = self.cap.read()
+        if not ok:
+            raise RuntimeError("No se pudo leer el primer frame del vídeo")
+        
+        if self.grados_rotacion != 0:
+            self.rotacion_sesion = self.grados_rotacion
+        else:
+            self.rotacion_sesion = rotacion_necesaria(frame0,self.normalizar_a)
+        
+        self.cap.set(cv2.CAP_PROP_POS_FRAMES,0)
+        
         self.contador = get_ejercicio(nombre_ejercicio,lado)
 
         self.repeticiones = 0
@@ -63,11 +90,11 @@ class VideoSession(Session):
         
     def loop(self):
         pantalla_alto = calcular_altura_pantalla()
-        nuevo_alto = pantalla_alto - 120
+        nuevo_alto = max(200, pantalla_alto - 120)
 
-        # Crear ventana solo una vez
-        cv2.namedWindow("Video - Seguimiento", cv2.WINDOW_NORMAL)
-        cv2.moveWindow("Video - Seguimiento", 100, 100)
+        nombre_ventana = "Ejercicio pregrabado - Seguimiento"
+        cv2.namedWindow(nombre_ventana, cv2.WINDOW_NORMAL)
+        cv2.moveWindow(nombre_ventana, 100, 100)
 
         while self.running and self.cap.isOpened():
             ret, frame = self.cap.read()
@@ -75,6 +102,9 @@ class VideoSession(Session):
                 print("Fin del vídeo o error al leer")
                 self.running = False
                 break
+            
+            if self.rotacion_sesion:
+                frame = rotar_frame(frame,self.rotacion_sesion)
 
             results = self.pose_tracker.procesar(frame)
             puntos = self.pose_tracker.extraer_landmarks(results, frame.shape)
@@ -110,12 +140,8 @@ class VideoSession(Session):
             if results:
                 frame = self.pose_tracker.dibuja_landmarks(frame, results)
 
-                alto_original, ancho_original = frame.shape[:2]
-                ratio = nuevo_alto / alto_original
-                nuevo_ancho = int(ancho_original * ratio)
-                frame = cv2.resize(frame, (nuevo_ancho, nuevo_alto))
-
-                cv2.imshow("Vídeo - Seguimiento", frame)
+            frame = redimensionar(frame, nuevo_alto)
+            cv2.imshow(nombre_ventana, frame)
 
             if cv2.waitKey(25) & 0xFF == 27:
                 self.running = False

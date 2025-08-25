@@ -11,6 +11,8 @@ from trackerfit.session.camera import CameraSession
 from trackerfit.session.video import VideoSession
 from trackerfit.utils.tipo_entrada_enum import TipoEntrada
 
+from trackerfit.utils.rotacion import (Normalizar, GradosRotacion)
+
 # -------------------------------
 # Helpers
 # -------------------------------
@@ -29,7 +31,15 @@ class SessionManager:
         self.end_time: Optional[datetime] = None
         self.historial_temporal = []
 
-    def iniciar_sesion(self, tipo: TipoEntrada, nombre_ejercicio: str, fuente: Optional[str] = None, lado: str = "derecho"):
+    def iniciar_sesion(
+        self,
+        tipo: TipoEntrada,
+        nombre_ejercicio: str,
+        fuente: Optional[str] = None,
+        lado: str = "derecho",
+        normalizar: Normalizar = "auto",
+        forzar_grados_rotacion: GradosRotacion = 0,
+        indice_camara: int = 0):
         """
         Inicia una nueva sesión de ejercicio.
         Puede ser desde cámara o desde un vídeo pregrabado.
@@ -39,18 +49,39 @@ class SessionManager:
             nombre_ejercicio (str): ID del ejercicio a realizar.
             fuente (str, opcional): Ruta del vídeo si se usa entrada por vídeo.
             lado (str): Lado del cuerpo ('derecho' o 'izquierdo').
+            normalizar (str|None): 'horizontal' | 'vertical' | 'auto' | None
+            forzar_grados_rotacion (int): 0 | 90 | 180 | 270
+            indice_camara (int): índice del dispositivo de cámara (0 por defecto)
         """
-        if self.session is not None:
-            raise RuntimeError("Ya hay una sesión activa.")
+        if self.session is not None and not getattr(self.session, "running", False):
+            try:
+                self.session.finalizar()
+            except Exception:
+                pass
+            
+            self.session = None
 
         if tipo == TipoEntrada.CAMARA:
             self.session = CameraSession()
-            self.session.iniciar(nombre_ejercicio, lado)
+            
+            normalizar_camara = "horizontal" if normalizar == "auto" else normalizar
+            
+            self.session.iniciar(nombre_ejercicio=nombre_ejercicio,
+                                 fuente=None,
+                                 lado=lado,
+                                 normalizar = normalizar_camara,
+                                 forzar_grados_rotacion=forzar_grados_rotacion,
+                                 indice_camara=indice_camara
+                                )
         elif tipo == TipoEntrada.VIDEO:
             if not fuente:
                 raise ValueError("Se requiere fuente de vídeo para una sesión tipo 'video'")
             self.session = VideoSession()
-            self.session.iniciar(nombre_ejercicio, fuente, lado)
+            self.session.iniciar(nombre_ejercicio,
+                                 fuente,
+                                 lado,
+                                 normalizar,
+                                 forzar_grados_rotacion)
         else:
             raise ValueError(f"Tipo de sesión desconocido: {tipo}")
 
@@ -113,4 +144,4 @@ class SessionManager:
         Returns:
             bool: True si la sesión está activa, False en caso contrario.
         """
-        return self.session is not None
+        return self.session is not None and getattr(self.session, "running", False)

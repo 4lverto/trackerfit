@@ -19,5 +19,5 @@ class Flexion(Ejercicio):
             else:
                 puntos = (11,13,15) # Hombro (izq) = 11 , Codo (izq) = 13 y Muñeca (izq) = 15
 
-            super().__init__(angulo_min=70,angulo_max=160,puntos=puntos)
+            super().__init__(angulo_min=80,angulo_max=160,puntos=puntos)
             self.umbral_validacion = self.angulo_min

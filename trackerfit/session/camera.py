@@ -4,6 +4,7 @@
 # -------------------------------
 import ctypes
 import threading
+from typing import Literal, Optional
 import cv2
 import time
 
@@ -11,12 +12,16 @@ from trackerfit.tracker.pose_tracker import PoseTracker
 from trackerfit.factory import get_ejercicio
 from trackerfit.session.session import Session
 
+from trackerfit.utils.rotacion import (
+    GradosRotacion, Normalizar,
+    calcular_altura_pantalla, rotar_frame,
+    rotacion_necesaria, redimensionar
+)
+
+
 # -------------------------------
 # Helpers
 # -------------------------------
-
-def get_screen_height():
-    return ctypes.windll.user32.GetSystemMetrics(1)  # Altura de pantalla
 
 class CameraSession(Session):
     def __init__(self):
@@ -27,16 +32,43 @@ class CameraSession(Session):
         self.thread = None
         self.cap = None
         self.historial_frames = []
+        
+        self.normalizar_a: Normalizar = "auto"
+        self.grados_rotacion: GradosRotacion = 0
+        self.rotacion_sesion: GradosRotacion = 0
 
-    def iniciar(self, nombre_ejercicio: str, lado: str = "derecho"):
+    def iniciar(
+            self,
+            nombre_ejercicio: str,
+            fuente: Optional[str] = None,
+            lado: str = "derecho",
+            normalizar: Normalizar = "horizontal",
+            forzar_grados_rotacion: GradosRotacion = 0,
+            indice_camara: int = 0        
+    ):
         if self.running:
             return
         
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(indice_camara)
         if not self.cap.isOpened():
             print("Camara no se pudo abrir")
-            raise RuntimeError("No se pudo abrir la cámara")
+            raise RuntimeError("No se pudo abrir la cámara con índice {indice_camara}")
 
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+        
+        ok, frame0 = self.cap.read()
+        if not ok:
+            raise RuntimeError("No se pudo capturar el primer frame de la cámara")
+        
+        self.normalizar_a = normalizar
+        self.grados_rotacion = forzar_grados_rotacion
+        
+        if self.grados_rotacion != 0:
+            self.rotacion_sesion = self.grados_rotacion
+        else:
+            self.rotacion_sesion = rotacion_necesaria(frame0,self.normalizar_a)
+        
         self.contador = get_ejercicio(nombre_ejercicio,lado)
 
         self.repeticiones = 0
@@ -48,18 +80,23 @@ class CameraSession(Session):
         """
         Bucle principal que procesa el vídeo y actualiza el estado del ejercicio Frame a Frame
         """
-        pantalla_alto = ctypes.windll.user32.GetSystemMetrics(1)
-        nuevo_alto = pantalla_alto - 120
+        pantalla_alto = calcular_altura_pantalla()
+        nuevo_alto = max(200, pantalla_alto - 120)
 
-        # Crear ventana antes del bucle
-        cv2.namedWindow("Camara - Seguimiento de Ejercicio", cv2.WINDOW_NORMAL)
-        cv2.moveWindow("Camara - Seguimiento de Ejercicio", 100, 100)
+        nombre_ventana = "Ejercicio en directo - Seguimiento"
+        cv2.namedWindow(nombre_ventana, cv2.WINDOW_NORMAL)
+        cv2.moveWindow(nombre_ventana, 100, 100)
 
         while self.running and self.cap.isOpened():
             ret, frame = self.cap.read()
             if not ret:
+                print("No se pudo leer de la cámara con índice {indice_camara}")
+                self.running = False
                 break
-
+            
+            if self.rotacion_sesion:
+                frame = rotar_frame(frame, self.rotacion_sesion)
+            
             results = self.pose_tracker.procesar(frame)
             puntos = self.pose_tracker.extraer_landmarks(results, frame.shape)
 
@@ -74,7 +111,7 @@ class CameraSession(Session):
                     self.contador.id2,
                     self.contador.id3,
                     angulo,
-                    umbral
+                    self.contador.umbral_validacion
                 )
                 
                 self.repeticiones = reps
@@ -92,11 +129,9 @@ class CameraSession(Session):
 
             if results:
                 frame = self.pose_tracker.dibuja_landmarks(frame, results)
-                alto_original, ancho_original = frame.shape[:2]
-                ratio = nuevo_alto / alto_original
-                nuevo_ancho = int(ancho_original * ratio)
-                frame = cv2.resize(frame, (nuevo_ancho, nuevo_alto))
-                cv2.imshow("Cámara - Seguimiento de Ejercicio", frame)
+            
+            frame = redimensionar(frame, nuevo_alto)
+            cv2.imshow(nombre_ventana, frame)
 
             if cv2.waitKey(1) & 0xFF == 27:
                 self.running = False

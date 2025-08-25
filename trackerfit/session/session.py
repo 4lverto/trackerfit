@@ -1,4 +1,4 @@
-# session/base.py
+# session/session.py
 # -------------------------------
 # Requierements
 # -------------------------------

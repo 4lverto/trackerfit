@@ -12,20 +12,9 @@ import mediapipe as mp
 
 class PoseTracker:
 
-    ''' Configuración inicial: Inicializo el modelo de pose de Mediapipe con mis parámetros 
-        - static_image_mode --> Para gestionar si capturamos vídeo en tiempo real o no
-        - model_complexity --> Nivel de precisión que usaremos (1=preciso y lento, 2=aceptable y rápido)-
-        - min_detection_confidence --> Confianza mínima para detectar
-        - min_tracking_confidence --> Confianza mínima para seguir el movimiento
-    '''
-    def __init__(self, static_image_mode=False, model_complexity=1,
-                 min_detection_confidence=0.5, min_tracking_confidence=0.5):
-        self.pose = mp.solutions.pose.Pose(
-            static_image_mode = static_image_mode,
-            model_complexity = model_complexity,
-            min_detection_confidence = min_detection_confidence,
-            min_tracking_confidence = min_tracking_confidence
-        )
+    ''' Configuración inicial: Inicializo el modelo de pose de Mediapipe con mis parámetros'''
+    def __init__(self):
+        self.pose = mp.solutions.pose.Pose()
         
         self.drawing_utils = mp.solutions.drawing_utils # Para dibujar puntos y líneas
         self.drawing_styles = mp.solutions.drawing_styles # Para obtener los colores y estilos por defecto
@@ -38,7 +27,7 @@ class PoseTracker:
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.pose.process(frame_rgb)
         return results # Results contiene toda la información de la pose
-    
+
     
     ''' Dibuja la pose (Esqueleto)
     Es decir, dibujo los landmarks y las conexiones entre ellos para mostrar

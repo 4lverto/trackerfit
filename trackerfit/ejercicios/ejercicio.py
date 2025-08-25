@@ -1,4 +1,4 @@
-# ejercicios/base.py
+# ejercicios/ejercicio.py
 # -------------------------------
 # Requierements
 # -------------------------------

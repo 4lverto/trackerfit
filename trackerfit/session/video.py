@@ -1,4 +1,4 @@
-# session/video_session.py
+# session/video.py
 # -------------------------------
 # Requierements
 # -------------------------------
@@ -7,7 +7,6 @@ import threading
 import cv2
 import time
 import ctypes
-from typing import Optional
 
 from trackerfit.tracker.pose_tracker import PoseTracker
 from trackerfit.factory import get_ejercicio

@@ -1,11 +1,10 @@
-# session/camera_session.py
+# session/camera.py
 # -------------------------------
 # Requierements
 # -------------------------------
 import ctypes
 import threading
 import cv2
-from typing import Optional
 import time
 
 from trackerfit.tracker.pose_tracker import PoseTracker

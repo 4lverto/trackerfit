@@ -3,7 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
-
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 # -------------------------------
 # Helpers
 # -------------------------------
@@ -19,5 +19,5 @@ class CrunchAbdominal(Ejercicio):
         else:
             puntos=(25,23,11) # Rodilla (der) = 25, # Cadera (der) = 23, Hombro (der) = 11
             
-        super().__init__(angulo_min=60,angulo_max=150,puntos=puntos)
+        super().__init__(angulo_min=60,angulo_max=150,puntos=puntos,tipo_esfuerzo=TipoEsfuerzo.CONTRACCION)
         self.umbral_validacion = self.angulo_min

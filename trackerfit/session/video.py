@@ -82,6 +82,7 @@ class VideoSession(Session):
         self.cap.set(cv2.CAP_PROP_POS_FRAMES,0)
         
         self.contador = get_ejercicio(nombre_ejercicio,lado)
+        self.pose_tracker.set_ejercicio(self.contador) # CAMBIO
 
         self.repeticiones = 0
         self.running = True
@@ -114,18 +115,17 @@ class VideoSession(Session):
                 self.repeticiones = reps
                 
                 #Dibujo del triángulo representativo del ángulo
-                umbral = self.contador.umbral_validacion
-                self.pose_tracker.dibujar_triangulo_con_angulo(
+                estado = self.pose_tracker.dibujar_triangulo_con_angulo(
                     frame, puntos,
                     self.contador.id1,
                     self.contador.id2,
                     self.contador.id3,
                     angulo,
-                    umbral
+                    getattr(self.contador, "umbral_validacion", None) # CAMBIO
                 )
 
                 timestamp = time.time()
-                estado = "activo" if self.contador.arriba or self.contador.abajo else "reposo"
+                # estado = "activo" if self.contador.arriba or self.contador.abajo else "reposo"
 
                 # Guardar detalles del frame actual para el resumen final
                 # Incluye timestamp, valor del ángulo, estado del movimiento, repeticiones y coordenadas de landmarks

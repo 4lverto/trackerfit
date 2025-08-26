@@ -3,6 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 
 # -------------------------------
 # Helpers
@@ -19,5 +20,5 @@ class ElevacionLateral(Ejercicio):
             else:
                 puntos = (15,11,23) # Muñeca (izq) = 15 , Hombro (izq) = 11 y Cadera (izq) = 23
 
-            super().__init__(angulo_min=40,angulo_max=90,puntos=puntos)
+            super().__init__(angulo_min=40,angulo_max=90,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
             self.umbral_validacion = self.angulo_max

@@ -3,6 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 
 # -------------------------------
 # Helpers
@@ -18,5 +19,5 @@ class CurlBicep(Ejercicio):
         else:
             puntos = (11, 13, 15) # Hombro (izq) = 11, # Codo (izq) = 13, Muñeca (izq) = 15
 
-        super().__init__(angulo_min=45, angulo_max=160, puntos=puntos)
+        super().__init__(angulo_min=45, angulo_max=160, puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.CONTRACCION)
         self.umbral_validacion = self.angulo_min

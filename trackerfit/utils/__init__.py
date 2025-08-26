@@ -9,9 +9,11 @@ from .rotacion import (
     calcular_altura_pantalla, rotar_frame, orientacion_de_frame,
     rotacion_necesaria, redimensionar
 )
+
+from .tipo_esfuerzo_enum import TipoEsfuerzo
 # -------------------------------
 # Helpers
 # -------------------------------
 __all__ = ["calcular_angulo", "calcular_angulo_landmarks", "TipoEntrada",
            "GradosRotacion", "Normalizar", "calcular_altura_pantalla", "rotar_frame",
-           "orientacion_de_frame" , "rotacion_necesaria", "redimensionar"]
+           "orientacion_de_frame" , "rotacion_necesaria", "redimensionar", "TipoEsfuerzo"]

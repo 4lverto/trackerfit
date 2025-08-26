@@ -3,6 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 
 # -------------------------------
 # Helpers
@@ -19,5 +20,5 @@ class ExtensionCuadricep(Ejercicio):
         else:
             puntos = (23,25,27) # Cadera (izq) = 23, # Rodilla (izq) = 25, Tobillo (izq) = 27
             
-        super().__init__(angulo_min=70,angulo_max=160,puntos=puntos)
+        super().__init__(angulo_min=70,angulo_max=160,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
         self.umbral_validacion = self.angulo_max

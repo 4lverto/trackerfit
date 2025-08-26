@@ -70,6 +70,7 @@ class CameraSession(Session):
             self.rotacion_sesion = rotacion_necesaria(frame0,self.normalizar_a)
         
         self.contador = get_ejercicio(nombre_ejercicio,lado)
+        self.pose_tracker.set_ejercicio(self.contador) # CAMBIO
 
         self.repeticiones = 0
         self.running = True
@@ -102,16 +103,16 @@ class CameraSession(Session):
 
             if puntos and self.contador:
                 angulo, reps = self.contador.actualizar(puntos)
+                self.repeticiones = reps # CAMBIO
                 
                 #Dibujo del triángulo representativo del ángulo
-                umbral = self.contador.umbral_validacion
-                self.pose_tracker.dibujar_triangulo_con_angulo(
+                estado = self.pose_tracker.dibujar_triangulo_con_angulo(
                     frame, puntos,
                     self.contador.id1,
                     self.contador.id2,
                     self.contador.id3,
                     angulo,
-                    self.contador.umbral_validacion
+                    getattr(self.contador,"umbral_validacion", None)
                 )
                 
                 self.repeticiones = reps

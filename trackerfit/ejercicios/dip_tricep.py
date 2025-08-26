@@ -3,6 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 
 # -------------------------------
 # Helpers
@@ -19,5 +20,5 @@ class DipTricep(Ejercicio):
         else:
             puntos = (11,13,15) # Hombro (der) = 11 , Codo (der) = 13 y Muñeca (der) = 15
             
-        super().__init__(angulo_min=160,angulo_max=90,puntos=puntos)
+        super().__init__(angulo_min=90,angulo_max=150,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
         self.umbral_validacion = self.angulo_max

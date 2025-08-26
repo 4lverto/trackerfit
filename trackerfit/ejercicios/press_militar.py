@@ -3,6 +3,7 @@
 # Requierements
 # -------------------------------
 from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.tipo_esfuerzo_enum import TipoEsfuerzo
 
 # -------------------------------
 # Helpers
@@ -19,5 +20,5 @@ class PressMilitar(Ejercicio):
         else:
             puntos=(13,11,23) # Codo (izq) = 13, # Hombro (izq) = 11, Cadera (izq) = 23
 
-        super().__init__(angulo_min=80 ,angulo_max=140,puntos=puntos)
+        super().__init__(angulo_min=80 ,angulo_max=140,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
         self.umbral_validacion = self.angulo_max

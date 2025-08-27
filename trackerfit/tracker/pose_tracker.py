@@ -3,11 +3,12 @@
 # Requierements
 # -------------------------------
 
-from typing import Optional
-from trackerfit.ejercicios.ejercicio import Ejercicio
-
-import cv2
 import mediapipe as mp
+import cv2
+from typing import Optional
+
+from trackerfit.ejercicios.ejercicio import Ejercicio
+from trackerfit.utils.estado_ejercicio_enum import TipoEstadoEjercicio
 
 
 # -------------------------------
@@ -16,8 +17,10 @@ import mediapipe as mp
 
 class PoseTracker:
 
-    ''' Configuración inicial: Inicializo el modelo de pose de Mediapipe con mis parámetros'''
     def __init__(self, ejercicio: Optional[Ejercicio]=None):
+        """
+        Configuración inicial: Inicializo el modelo de pose de Mediapipe con mis parámetros
+        """
         self.pose = mp.solutions.pose.Pose()
         
         self.drawing_utils = mp.solutions.drawing_utils # Para dibujar puntos y líneas
@@ -25,10 +28,13 @@ class PoseTracker:
         self.pose_connections = mp.solutions.pose.POSE_CONNECTIONS # Cómo se conectan los puntos del cuerpo
 
         self.ejercicio = ejercicio
-    ''' Detección de landmarks
-    Convierte el frame de BGR (formato de OpenCV) a RGB (formato de MediaPipe) y luego
-    lo pasa por el modelo para obtener los landmarks (puntos del cuerpo)'''
+
     def procesar(self, frame):
+        """
+        Detección de landmarks
+        Convierte el frame de BGR (formato de OpenCV) a RGB (formato de MediaPipe) y luego
+        lo pasa por el modelo para obtener los landmarks (puntos del cuerpo)
+        """
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.pose.process(frame_rgb)
         return results # Results contiene toda la información de la pose
@@ -36,10 +42,12 @@ class PoseTracker:
     def set_ejercicio(self, ejercicio: Ejercicio) -> None:
         self.ejercicio = ejercicio
     
-    ''' Dibuja la pose (Esqueleto)
-    Es decir, dibujo los landmarks y las conexiones entre ellos para mostrar
-    visualmente la pose en pantalla'''
     def dibuja_landmarks(self, frame, results):
+        """
+        Dibuja la pose (Esqueleto)
+        Es decir, dibujo los landmarks y las conexiones entre ellos para mostrar
+        visualmente la pose en pantalla
+        """
         if(results.pose_landmarks):
             self.drawing_utils.draw_landmarks(
                 frame,
@@ -60,7 +68,7 @@ class PoseTracker:
         p3 = puntos[id3]["x"], puntos[id3]["y"]
 
         # Color según validación del ángulo
-        estado,color = self._obtener_color(angulo,umbral_validacion)
+        estado,color = self._obtener_color(angulo if angulo is not None else 0.0,umbral_validacion)
 
         # Dibujar líneas del triángulo
         cv2.line(frame, p1, p2, color, 2)
@@ -68,14 +76,16 @@ class PoseTracker:
         cv2.line(frame, p3, p1, color, 2)
 
         # Mostrar valor del ángulo
-        cv2.putText(frame, f"{int(angulo)} ({estado})", p2, cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
+        cv2.putText(frame, f"{int(angulo)} {estado}" if angulo is not None else f"-- {estado}", p2, cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
 
         return estado
     
-    ''' Extraemos las coordenadas de los landmarks
-    Convierto los landmarks a coordenadas reales en píxeles según el tamaño del frame (alto,ancho),
-    ya que los landmarks están en coordenadas normalizadas (0,1)'''
     def extraer_landmarks(self, results, frame_shape):
+        """
+        Extraemos las coordenadas de los landmarks
+        Convierto los landmarks a coordenadas reales en píxeles según el tamaño del frame (alto,ancho),
+        ya que los landmarks están en coordenadas normalizadas (0,1)
+        """
         height, width, _ = frame_shape
         puntos = {}
         
@@ -89,16 +99,15 @@ class PoseTracker:
                 }
         return puntos
     
-    
     def _obtener_color(self, angulo: float, umbral_validacion: Optional[float]):
         if self.ejercicio is not None and hasattr(self.ejercicio, "esfuerzo_activo"):
             esforzandose = self.ejercicio.esfuerzo_activo(angulo)
-            return ("esfuerzo" if esforzandose else "relajacion", (0,255,0) if esforzandose else (0,0,255))
+            return (f"{TipoEstadoEjercicio.ESFUERZO.value}" if esforzandose else f"{TipoEstadoEjercicio.RELAJACION.value}", (0,255,0) if esforzandose else (0,0,255))
         else:
             if umbral_validacion is None:
                 umbral_validacion = 90
             
         hay_esfuerzo = angulo < umbral_validacion
-        return ("esfuerzo" if hay_esfuerzo else "relajacion" , (0, 255, 0) if hay_esfuerzo else (0, 0, 255))
+        return (f"{TipoEstadoEjercicio.ESFUERZO.value}" if hay_esfuerzo else f"{TipoEstadoEjercicio.RELAJACION.value}" , (0, 255, 0) if hay_esfuerzo else (0, 0, 255))
             
         

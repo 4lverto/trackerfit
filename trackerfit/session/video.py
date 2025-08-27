@@ -16,6 +16,7 @@ from trackerfit.utils.rotacion import (
     calcular_altura_pantalla, rotar_frame,
     rotacion_necesaria, redimensionar
 )
+from trackerfit.utils.lado_enum import Lado
 
 # -------------------------------
 # Helpers
@@ -34,13 +35,12 @@ class VideoSession(Session):
         self.normalizar_a: Normalizar = "auto"
         self.grados_rotacion: GradosRotacion = 0
         self.rotacion_sesion: GradosRotacion = 0
-    
-    
+       
     def iniciar(
             self,
             nombre_ejercicio: str,
             fuente: Optional[str] = None,
-            lado: str = "derecho",
+            lado: Lado = Lado.derecho,
             normalizar: Normalizar = "auto",
             forzar_grados_rotacion: GradosRotacion = 0
     ):
@@ -51,17 +51,16 @@ class VideoSession(Session):
         if fuente is None:
             raise ValueError("Se debe proporcionar la ruta del archivo de vídeo.")
 
-        print(f"Ruta inicial: {fuente}")
+        #print(f"Ruta inicial: {fuente}")
 
         fuente = fuente.strip()
         if not os.path.isabs(fuente):
             raise ValueError("La ruta del vídeo debe ser absoluta. Verifica desde el backend.")
 
-        print(f"Ruta final a abrir: {fuente}")
+        #print(f"Ruta final a abrir: {fuente}")
 
         if not os.path.exists(fuente):
-            print("El archivo de vídeo no existe en el sistema.")
-            return
+            raise RuntimeError(f"El archivo de vídeo no existe en el sistema.")
 
         self.cap = cv2.VideoCapture(fuente)
         if not self.cap.isOpened():
@@ -100,7 +99,6 @@ class VideoSession(Session):
         while self.running and self.cap.isOpened():
             ret, frame = self.cap.read()
             if not ret:
-                print("Fin del vídeo o error al leer")
                 self.running = False
                 break
             
@@ -121,16 +119,13 @@ class VideoSession(Session):
                     self.contador.id2,
                     self.contador.id3,
                     angulo,
-                    getattr(self.contador, "umbral_validacion", None) # CAMBIO
+                    getattr(self.contador, "umbral_validacion", None)
                 )
-
-                timestamp = time.time()
-                # estado = "activo" if self.contador.arriba or self.contador.abajo else "reposo"
 
                 # Guardar detalles del frame actual para el resumen final
                 # Incluye timestamp, valor del ángulo, estado del movimiento, repeticiones y coordenadas de landmarks
                 self.historial_frames.append({
-                    "timestamp": timestamp,
+                    "timestamp": time.time(),
                     "angulo": angulo if angulo is not None else None,
                     "repeticiones": self.repeticiones,
                     "estado": estado,
@@ -142,11 +137,15 @@ class VideoSession(Session):
 
             frame = redimensionar(frame, nuevo_alto)
             cv2.imshow(nombre_ventana, frame)
+            
+            if cv2.getWindowProperty(nombre_ventana, cv2.WND_PROP_VISIBLE) < 1:
+                self.running = False
+                break
 
             if cv2.waitKey(25) & 0xFF == 27:
                 self.running = False
 
-        print(f"Procesamiento de vídeo finalizado. Total repeticiones: {self.repeticiones}")
+        #print(f"Procesamiento de vídeo finalizado. Total repeticiones: {self.repeticiones}")
         self._cleanup()
 
     def finalizar(self):
@@ -155,10 +154,12 @@ class VideoSession(Session):
             self.thread.join()
         self._cleanup()
 
+    def get_repeticiones(self) -> int:
+        return self.repeticiones
+  
     def _cleanup(self):
         if self.cap:
             self.cap.release()
         cv2.destroyAllWindows()
 
-    def get_repeticiones(self) -> int:
-        return self.repeticiones
+    

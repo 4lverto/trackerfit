@@ -2,7 +2,6 @@
 # -------------------------------
 # Requierements
 # -------------------------------
-import ctypes
 import threading
 from typing import Literal, Optional
 import cv2
@@ -18,6 +17,7 @@ from trackerfit.utils.rotacion import (
     rotacion_necesaria, redimensionar
 )
 
+from trackerfit.utils.lado_enum import Lado
 
 # -------------------------------
 # Helpers
@@ -41,7 +41,7 @@ class CameraSession(Session):
             self,
             nombre_ejercicio: str,
             fuente: Optional[str] = None,
-            lado: str = "derecho",
+            lado: Lado = Lado.derecho,
             normalizar: Normalizar = "horizontal",
             forzar_grados_rotacion: GradosRotacion = 0,
             indice_camara: int = 0        
@@ -50,9 +50,9 @@ class CameraSession(Session):
             return
         
         self.cap = cv2.VideoCapture(indice_camara)
+        
         if not self.cap.isOpened():
-            print("Camara no se pudo abrir")
-            raise RuntimeError("No se pudo abrir la cámara con índice {indice_camara}")
+            raise RuntimeError(f"No se pudo abrir la cámara con índice {indice_camara}")
 
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -91,7 +91,6 @@ class CameraSession(Session):
         while self.running and self.cap.isOpened():
             ret, frame = self.cap.read()
             if not ret:
-                print("No se pudo leer de la cámara con índice {indice_camara}")
                 self.running = False
                 break
             
@@ -111,18 +110,14 @@ class CameraSession(Session):
                     self.contador.id1,
                     self.contador.id2,
                     self.contador.id3,
-                    angulo,
-                    getattr(self.contador,"umbral_validacion", None)
+                    angulo, getattr(self.contador,"umbral_validacion", None)
                 )
                 
-                self.repeticiones = reps
-                timestamp = time.time()
-                estado = "activo" if self.contador.arriba or self.contador.abajo else "reposo"
                 # Guardar detalles del frame actual para el resumen final
                 # Incluye timestamp, valor del ángulo, estado del movimiento, repeticiones y coordenadas de landmarks
                 self.historial_frames.append({
-                    "timestamp": timestamp,
-                    "angulo": angulo,
+                    "timestamp": time.time(),
+                    "angulo": angulo if angulo is not None else None,
                     "repeticiones": self.repeticiones,
                     "estado": estado,
                     "landmarks": puntos
@@ -133,6 +128,10 @@ class CameraSession(Session):
             
             frame = redimensionar(frame, nuevo_alto)
             cv2.imshow(nombre_ventana, frame)
+            
+            if cv2.getWindowProperty(nombre_ventana, cv2.WND_PROP_VISIBLE) < 1:
+                self.running = False
+                break
 
             if cv2.waitKey(1) & 0xFF == 27:
                 self.running = False
@@ -149,7 +148,6 @@ class CameraSession(Session):
         if self.cap:
             self.cap.release()
         cv2.destroyAllWindows()  # Cierra la ventana al finalizar
-
 
     def get_repeticiones(self) -> int:
         return self.repeticiones

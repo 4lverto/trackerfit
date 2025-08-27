@@ -16,7 +16,8 @@ def get_ejercicio(nombre: EjercicioId, lado='derecho'):
     Args:
         nombre (EjercicioId): Enum con el nombre del ejercicio.
         lado (str): 'derecho' o 'izquierdo'
-
+    Raises:
+        ValueError: Si el nombre no corresponde a ningún ejercicio
     Returns:
         Ejercicio: instancia del ejercicio correspondiente.
     """

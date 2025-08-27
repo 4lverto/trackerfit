@@ -27,3 +27,4 @@ dist/
 # MacOS / Windows
 .DS_Store
 Thumbs.db
+.ps1

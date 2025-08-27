@@ -9,9 +9,9 @@ from datetime import datetime
 from trackerfit.session.session import Session
 from trackerfit.session.camera import CameraSession
 from trackerfit.session.video import VideoSession
-from trackerfit.utils.tipo_entrada_enum import TipoEntrada
-
 from trackerfit.utils.rotacion import (Normalizar, GradosRotacion)
+from trackerfit.utils.tipo_entrada_enum import TipoEntrada
+from trackerfit.utils.lado_enum import Lado
 
 # -------------------------------
 # Helpers
@@ -36,7 +36,7 @@ class SessionManager:
         tipo: TipoEntrada,
         nombre_ejercicio: str,
         fuente: Optional[str] = None,
-        lado: str = "derecho",
+        lado: Lado = Lado.derecho,
         normalizar: Normalizar = "auto",
         forzar_grados_rotacion: GradosRotacion = 0,
         indice_camara: int = 0):
@@ -53,14 +53,17 @@ class SessionManager:
             forzar_grados_rotacion (int): 0 | 90 | 180 | 270
             indice_camara (int): índice del dispositivo de cámara (0 por defecto)
         """
-        if self.session is not None and not getattr(self.session, "running", False):
+        if self.session is not None:
             try:
-                self.session.finalizar()
+                if getattr(self.session, "running", False):
+                    self.session.finalizar()
+                else:
+                    self.session.finalizar()
             except Exception:
                 pass
-            
-            self.session = None
-
+            finally:
+                self.session = None
+                
         if tipo == TipoEntrada.CAMARA:
             self.session = CameraSession()
             

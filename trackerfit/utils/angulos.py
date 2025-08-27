@@ -24,14 +24,20 @@ def calcular_angulo(p1, p2, p3) -> float:
     Returns:
         float: Ángulo en grados.
     """
-    a = np.array(p1)
-    b = np.array(p2)
-    c = np.array(p3)
+    a = np.array(p1, dtype=float)
+    b = np.array(p2, dtype=float)
+    c = np.array(p3, dtype=float)
 
     ba = a - b
     bc = c - b
-
-    coseno = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    
+    nba = _normalizar(ba)
+    nbc = _normalizar(bc)
+    
+    if nba == 0.0 or nbc == 0.0:
+        return None
+    
+    coseno = np.dot(ba, bc) / (nba * nbc)
     coseno = np.clip(coseno, -1.0, 1.0)
     angulo = degrees(acos(coseno))
     return angulo
@@ -53,3 +59,6 @@ def calcular_angulo_landmarks(puntos: dict, id1: int, id2: int, id3: int) -> flo
     p2 = (puntos[id2]['x'], puntos[id2]['y'])
     p3 = (puntos[id3]['x'], puntos[id3]['y'])
     return calcular_angulo(p1, p2, p3)
+
+def _normalizar(v: np.ndarray) -> float:
+    return float(np.linalg.norm(v))

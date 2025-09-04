@@ -28,3 +28,6 @@ dist/
 .DS_Store
 Thumbs.db
 .ps1
+
+# Pseudocódigo algoritmo:
+pseudocodigo.go

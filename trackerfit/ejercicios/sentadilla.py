@@ -20,5 +20,5 @@ class Sentadilla(Ejercicio):
         else:
             puntos = (23,25,27) # Cadera (der) = 23 , Rodilla (der) = 25 y Tobillo(der) = 27
 
-        super().__init__(angulo_min=80,angulo_max=150,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.CONTRACCION)
+        super().__init__(angulo_min=85,angulo_max=150,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.CONTRACCION)
         self.umbral_validacion = self.angulo_min

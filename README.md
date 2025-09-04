@@ -4,7 +4,7 @@
 
 ## ✅ Requisitos
 
-- Python >= 3.8
+- Python >= 3.10
 - pip >= 21.0
 
 ## 🚀 Instalación
@@ -20,6 +20,16 @@ pip install trackerfit
 git clone https://github.com/4lverto/trackerfit.git
 cd trackerfit
 pip install -e .
+```
+
+### Instalación rápida + Troubleshooting
+
+Si durante la instalación tienes problemas, siguie los siguientes pasos y asegúrate de cumplir con las versiones establecidas en las dependencias.
+
+```bash
+python -m pip install --upgrade pip setuptools wheel
+pip install --prefer-binary "numpy==1.26.4" "matplotlib>=3.9" "opencv-python>=4.11"
+pip install trackerfit==1.0.1
 ```
 
 ## 📦 Características

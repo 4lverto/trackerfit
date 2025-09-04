@@ -20,5 +20,5 @@ class DipTricep(Ejercicio):
         else:
             puntos = (11,13,15) # Hombro (der) = 11 , Codo (der) = 13 y Muñeca (der) = 15
             
-        super().__init__(angulo_min=90,angulo_max=150,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
+        super().__init__(angulo_min=95,angulo_max=140,puntos=puntos, tipo_esfuerzo=TipoEsfuerzo.AMPLITUD)
         self.umbral_validacion = self.angulo_max
